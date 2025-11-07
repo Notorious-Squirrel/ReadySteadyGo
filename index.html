@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>READY PLAYER ONE — Three Keys Hunt</title>
+  <meta name="description" content="A single‑file, GitHub Pages‑ready CTF template with 3 keys + leaderboard."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0b0f14;
+      --panel:#101621;
+      --card:#0f1420cc;
+      --text:#d9f0ff;
+      --muted:#8fb3c7;
+      --accent:#9b5cff;   /* neon purple */
+      --accent2:#08f7a3;  /* emerald/acid green */
+      --danger:#ff4d6d;
+      --ok:#30e37a;
+      --warn:#ffd166;
+      --shadow:0 20px 60px rgb(0 0 0 / 35%);
+      --radius:20px;
+      --glow:0 0 12px var(--accent), 0 0 30px color-mix(in hsl, var(--accent) 60%, #fff 40%);
+      --glow2:0 0 10px var(--accent2), 0 0 26px color-mix(in hsl, var(--accent2) 60%, #fff 40%);
+    }
+    html,body{height:100%}
+    body{
+      margin:0; background: radial-gradient(1200px 800px at 10% 10%, #0e1624, transparent),
+                              radial-gradient(900px 700px at 90% 20%, #0a1220, transparent),
+                              linear-gradient(#0b0f14,#0b0f14);
+      color:var(--text); font-family:"VT323", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      letter-spacing:.3px; display:flex; min-height:100%;
+    }
+    .wrap{width:100%; max-width:1100px; margin:0 auto; padding:24px 16px 80px}
+
+    header{
+      display:grid; grid-template-columns:1fr auto; gap:16px; align-items:center; margin-bottom:16px;
+    }
+    .brand{display:flex; gap:14px; align-items:center}
+    .logo{width:56px; height:56px; border-radius:16px; background:linear-gradient(145deg, var(--accent), var(--accent2)); box-shadow: var(--glow2)}
+    h1{margin:0; font-family:"Orbitron", system-ui, sans-serif; font-size:clamp(22px, 4.2vw, 36px); letter-spacing:1.5px}
+    .sub{color:var(--muted); font-size:16px}
+
+    .hud{display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end}
+    .chip{background:var(--panel); border:1px solid #1f2a3a; padding:10px 14px; border-radius:999px; box-shadow: var(--shadow)}
+    .chip b{color:var(--accent2)}
+
+    .grid{display:grid; gap:16px; grid-template-columns:1.2fr .8fr}
+    @media (max-width: 900px){ .grid{grid-template-columns:1fr} }
+
+    .card{background:var(--card); border:1px solid #1a2332; border-radius:var(--radius); padding:18px; box-shadow:var(--shadow); position:relative; overflow:hidden}
+    .card h2{margin:0 0 10px; font-family:"Orbitron"; font-size:22px; letter-spacing:1px}
+    .badge{display:inline-block; border:1px solid #26344a; background:#0d1523; padding:6px 10px; border-radius:12px; color:var(--muted); font-size:14px}
+    .divider{height:1px; background:linear-gradient(90deg,transparent, #2a3852, transparent); margin:12px -18px}
+
+    .hero{display:grid; gap:10px}
+    .intro{font-size:18px; line-height:1.6}
+    .cta{display:flex; gap:10px; flex-wrap:wrap}
+    button{font-family:"Orbitron"; letter-spacing:.8px; border:none; border-radius:12px; padding:12px 14px; cursor:pointer; transition: transform .08s ease, box-shadow .2s}
+    .btn{background:linear-gradient(180deg, #1a1830, #1a1f35); color:var(--text); border:1px solid #2d2f56}
+    .btn-primary{background:linear-gradient(180deg, #261a3c, #151a3a); border:1px solid #4b2b87; box-shadow: var(--glow)}
+    .btn-primary:active{transform:translateY(1px)}
+
+    .progress{display:grid; grid-template-columns:repeat(3,1fr); gap:12px}
+    .step{padding:12px; border:1px dashed #2b3b58; border-radius:12px; text-align:center; position:relative}
+    .step.done{border-style:solid; border-color:#2f6c63; background:linear-gradient(180deg, rgba(8,247,163,.07), transparent); box-shadow:var(--glow2)}
+    .step .k{display:block; font-size:14px; color:var(--muted)}
+    .step .v{font-size:20px}
+
+    .keybox{display:grid; grid-template-columns:1fr auto; gap:10px; margin-top:10px}
+    input[type="text"]{
+      background:#0b1220; border:1px solid #28354d; color:var(--text); padding:12px 12px; border-radius:12px; font:inherit; outline:none; box-shadow:inset 0 0 0 2px transparent; transition:box-shadow .2s, border-color .2s
+    }
+    input[type="text"]:focus{border-color:#3d4f73; box-shadow:inset 0 0 0 2px #1b2a44}
+
+    .result{margin-top:8px; min-height:20px; font-size:16px}
+    .ok{color:var(--ok)} .err{color:var(--danger)} .hint{color:var(--warn)}
+
+    .scoreboard{max-height:480px; overflow:auto}
+    table{width:100%; border-collapse:collapse; font-size:16px}
+    th,td{padding:10px; border-bottom:1px dashed #22314a}
+    th{position:sticky; top:0; background:#0e1524; text-align:left}
+
+    .footer{opacity:.8; margin-top:22px; font-size:14px; color:var(--muted)}
+
+    /* subtle animated scanlines */
+    .scan::before{content:""; position:absolute; inset:0; background: repeating-linear-gradient( to bottom, #ffffff05 0, #ffffff05 2px, transparent 2px, transparent 4px ); pointer-events:none; mix-blend-mode:screen; animation:scan 6s linear infinite}
+    @keyframes scan{from{transform:translateY(-10%)} to{transform:translateY(10%)} }
+
+    .gate{border-left:3px solid var(--accent2); padding-left:12px}
+    .gate h3{margin:0 0 8px; font-size:18px; color:var(--accent2)}
+    .gate p{margin:6px 0}
+    .pill{display:inline-flex; gap:6px; align-items:center; padding:6px 10px; border-radius:999px; border:1px solid #2b3b58; background:#0d1422; color:var(--muted); font-size:14px}
+
+    .toast{position:fixed; right:16px; bottom:16px; background:#0e1726; border:1px solid #29405c; color:var(--text); padding:12px 14px; border-radius:12px; box-shadow:var(--shadow); display:none}
+
+    /* confetti canvas */
+    canvas#fx{position:fixed; inset:0; pointer-events:none}
+  </style>
+</head>
+<body>
+  <canvas id="fx"></canvas>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>READY PLAYER ONE — <span style="color:var(--accent2)">Three Keys Hunt</span></h1>
+          <div class="sub">Find the Copper Key, the Jade Key, and the Crystal Key. Clear the gates. Climb the scoreboard.</div>
+        </div>
+      </div>
+      <div class="hud">
+        <div class="chip" id="playerChip">PLAYER: <b id="playerName">ANON</b></div>
+        <div class="chip">TIME: <b id="timer">00:00</b></div>
+        <div class="chip">PROGRESS: <b id="prog">0 / 3</b></div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card scan" id="left">
+        <div class="hero">
+          <span class="badge">EVENT ▸ OASIS // GITHUB PAGES SAFE</span>
+          <p class="intro">
+            <b>Greetings, gunter.</b> This is a solo-ready, static‑site CTF built to run on GitHub Pages. No backend required.
+            Enter your alias, read each clue, and submit the correct <em>key phrase</em>. Keys unlock in sequence.
+            The leaderboard defaults to <span class="pill">local-only</span> (browser storage) but you can wire a cloud provider in minutes (see code comments).
+          </p>
+          <div class="cta">
+            <input id="alias" type="text" placeholder="Choose your alias…" maxlength="24" />
+            <button class="btn btn-primary" id="start">ENTER THE OASIS</button>
+            <button class="btn" id="resetRun" title="Clear your local progress">RESET RUN</button>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="progress" id="steps">
+            <div class="step" id="s1"><span class="k">KEY I</span><span class="v">Copper</span></div>
+            <div class="step" id="s2"><span class="k">KEY II</span><span class="v">Jade</span></div>
+            <div class="step" id="s3"><span class="k">KEY III</span><span class="v">Crystal</span></div>
+          </div>
+
+          <div class="divider"></div>
+
+          <!-- === GATE 1 === -->
+          <div class="gate" id="gate1">
+            <h3>Key I — The Copper Key</h3>
+            <p class="muted">CLUE:</p>
+            <p>
+              In a <em>1970s</em> arcade where pixels sing,<br>
+              find the <b>easter egg</b> the creator hid within a ring.<br>
+              Name the <em>developer</em> who signed the game unseen.<br>
+              (Format your answer like: <code>FIRST LAST</code>)
+            </p>
+            <div class="keybox">
+              <input id="k1" type="text" placeholder="Enter Copper Key phrase" autocomplete="off" />
+              <button class="btn btn-primary" data-key="1">UNLOCK</button>
+            </div>
+            <div class="result" id="r1"></div>
+          </div>
+
+          <div class="divider"></div>
+
+          <!-- === GATE 2 === -->
+          <div class="gate" id="gate2" hidden>
+            <h3>Key II — The Jade Key</h3>
+            <p class="muted">CLUE:</p>
+            <p>
+              Consult the <b>almanac</b> and track the year<br>
+              when a <em>DeLorean</em> first shifted gear.<br>
+              Join <em>year + vehicle</em> with a dash and case it all in caps, like <code>1985-DELOREAN</code>.
+            </p>
+            <div class="keybox">
+              <input id="k2" type="text" placeholder="Enter Jade Key phrase" autocomplete="off" />
+              <button class="btn btn-primary" data-key="2">UNLOCK</button>
+            </div>
+            <div class="result" id="r2"></div>
+          </div>
+
+          <div class="divider"></div>
+
+          <!-- === GATE 3 === -->
+          <div class="gate" id="gate3" hidden>
+            <h3>Key III — The Crystal Key</h3>
+            <p class="muted">CLUE:</p>
+            <p>
+              At the final gate, speak the phrase<br>
+              that <em>ends the contest</em> and sets ablaze<br>
+              the scoreboard lights: your alias + <code>WON</code> (e.g. <code>ART3MIS WON</code>).
+            </p>
+            <div class="keybox">
+              <input id="k3" type="text" placeholder="Enter Crystal Key phrase" autocomplete="off" />
+              <button class="btn btn-primary" data-key="3">UNLOCK</button>
+            </div>
+            <div class="result" id="r3"></div>
+          </div>
+
+          <div class="footer">Tip: You can swap these clues and the accepted phrases without breaking the flow. Search the JS for <code>HASHES</code> and <code>validateKey()</code>.</div>
+        </div>
+      </section>
+
+      <aside class="card scoreboard" id="right">
+        <h2>HALLIDAY'S SCOREBOARD</h2>
+        <p class="sub">Local leaderboard by default. Cloud optional (see code comments).</p>
+        <table id="board">
+          <thead>
+            <tr><th>#</th><th>Alias</th><th>Keys</th><th>Time</th><th>Date</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <div class="divider"></div>
+        <div class="cta">
+          <button class="btn" id="shareBtn">SHARE PROOF</button>
+          <button class="btn" id="wipeBoard" title="Clear ONLY the local leaderboard">WIPE LEADERBOARD (LOCAL)</button>
+        </div>
+        <p class="footer">Ties are broken by earliest completion time. Times are from your browser's clock.</p>
+      </aside>
+    </div>
+
+    <div class="toast" id="toast"></div>
+  </div>
+
+  <script>
+  /*
+   * READY PLAYER ONE — THREE KEYS HUNT (Single file, static)
+   * -------------------------------------------------------
+   * ✅ GitHub Pages friendly (no build step)
+   * ✅ Keys validated by SHA-256 hash (client-side)
+   * ✅ Local leaderboard out of the box (localStorage)
+   * 🔌 Cloud leaderboard optional via Supabase REST (see PROVIDER below)
+   * 🎛️ Skinnable via CSS variables; VT323/Orbitron fonts
+   * ✨ Confetti on win
+   *
+   * HOW TO CUSTOMISE KEYS
+   * ---------------------
+   * 1) Choose your new accepted phrases, e.g.
+   *     - Copper: "WARREN ROBINETT"
+   *     - Jade:   "1985-DELOREAN"
+   *     - Crystal:"<player alias> WON"  (this one is dynamic by alias)
+   * 2) Replace the HASHES.* values below with SHA-256 of your canonical phrase(s).
+   *    Use lowercase/uppercase consistently; this code normalises inputs via trim + collapse spaces.
+   *    To generate a hash, you can use a browser console snippet:
+   *    
+   *    async function sha(s){
+   *      const enc = new TextEncoder().encode(s);
+   *      const buf = await crypto.subtle.digest('SHA-256', enc);
+   *      return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+   *    }
+   *    sha('WARREN ROBINETT')
+   *
+   * 3) (Optional) If you want multiple acceptable answers for a key, add multiple hashes to that key's array.
+   * 4) Swap/replace the CLUE text in the HTML sections above to match your riddle.
+   *
+   * CLOUD LEADERBOARD (OPTIONAL)
+   * ----------------------------
+   * - Set PROVIDER to 'supabase' and fill SUPABASE_URL + SUPABASE_ANON + TABLE.
+   * - Create a PostgREST table with columns: alias(text), keys(int), ms(int), created_at(timestamptz default now()).
+   * - Row policy: allow insert & select; restrict update/delete. Rate-limit via RLS if desired.
+   * - This keeps your page static while storing results centrally.
+   */
+
+  // ======= CONFIG =======
+  const PROVIDER = 'local'; // 'local' | 'supabase'
+  const SUPABASE = {
+    URL: 'https://YOUR-PROJECT.supabase.co',
+    ANON:'YOUR-ANON-KEY',
+    TABLE:'rpo_scoreboard'
+  };
+
+  // Canonical, accepted answer hashes (see HOW TO CUSTOMISE).
+  // Default accepted phrases:
+  //  K1: "WARREN ROBINETT"
+  //  K2: "1985-DELOREAN"
+  //  K3: "<ALIAS> WON" (dynamic per current alias)
+  const HASHES = {
+    1: [
+      // SHA-256 of 'WARREN ROBINETT'
+      'ae910a4682f1cd0f2f7b0ff5aea09c931972d20ca2125a7ac20bf2ae1df2d3c3'
+    ],
+    2: [
+      // SHA-256 of '1985-DELOREAN'
+      'bdbcda0f4c686bebe3a05d43fcae773fef8e0c038adf0f1ff35f799da4bbc0ea'
+    ]
+    // Key 3 is computed on the fly based on alias
+  };
+
+  // ======= STATE =======
+  const el = s=>document.querySelector(s);
+  const boardEl = el('#board tbody');
+  const steps = [null, el('#s1'), el('#s2'), el('#s3')];
+  const gates = [null, el('#gate1'), el('#gate2'), el('#gate3')];
+  const results = [null, el('#r1'), el('#r2'), el('#r3')];
+  const prog = el('#prog');
+  const timerEl = el('#timer');
+  const playerNameEl = el('#playerName');
+  const toast = el('#toast');
+  const fx = el('#fx');
+
+  let state = {
+    alias: 'ANON',
+    startedAt: null,
+    finishedAt: null,
+    keys: 0,
+    solved: {1:false,2:false,3:false}
+  };
+
+  // Load any existing run from localStorage
+  const savedRun = JSON.parse(localStorage.getItem('rpo_run')||'null');
+  if(savedRun){ state = savedRun; updateHUD(); reflectUI(); }
+
+  // ======= UTILS =======
+  function normaliseInput(s){
+    return s.trim().replace(/\s+/g,' ').toUpperCase();
+  }
+  async function sha256Hex(s){
+    const enc = new TextEncoder().encode(s);
+    const buf = await crypto.subtle.digest('SHA-256', enc);
+    return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+  }
+  function fmt(ms){
+    const t = Math.max(0, Math.floor(ms/1000));
+    const m = String(Math.floor(t/60)).padStart(2,'0');
+    const s = String(t%60).padStart(2,'0');
+    return `${m}:${s}`;
+  }
+  function now(){ return Date.now(); }
+  function showToast(msg){ toast.textContent = msg; toast.style.display='block'; setTimeout(()=>toast.style.display='none', 2200); }
+
+  function persist(){ localStorage.setItem('rpo_run', JSON.stringify(state)); }
+
+  function updateHUD(){
+    playerNameEl.textContent = state.alias || 'ANON';
+    prog.textContent = `${state.keys} / 3`;
+    steps.forEach((s,i)=>{ if(!s||i===0) return; s.classList.toggle('done', !!state.solved[i]); });
+  }
+
+  function reflectUI(){
+    // Lock/unlock gates by progress
+    gates[1].hidden = false;
+    gates[2].hidden = !state.solved[1];
+    gates[3].hidden = !(state.solved[1] && state.solved[2]);
+  }
+
+  // Timer loop
+  setInterval(()=>{
+    const base = state.startedAt ? (state.finishedAt || now()) - state.startedAt : 0;
+    timerEl.textContent = fmt(base);
+  }, 500);
+
+  // ======= CONFETTI (tiny) =======
+  const ctx = fx.getContext('2d');
+  let bits = [];
+  function bang(){
+    const W = fx.width = innerWidth; const H = fx.height = innerHeight;
+    bits = Array.from({length:120},()=>({
+      x: Math.random()*W,
+      y: -20,
+      r: 4+Math.random()*6,
+      vx: -2+Math.random()*4,
+      vy: 2+Math.random()*3,
+      a: 1
+    }));
+    (function loop(){
+      ctx.clearRect(0,0,fx.width,fx.height);
+      bits.forEach(b=>{
+        b.x+=b.vx; b.y+=b.vy; b.a-=0.008;
+        ctx.globalAlpha = Math.max(0,b.a);
+        ctx.fillStyle = Math.random()>.5? 'rgba(155,92,255,1)' : 'rgba(8,247,163,1)';
+        ctx.beginPath(); ctx.arc(b.x,b.y,b.r,0,Math.PI*2); ctx.fill();
+      });
+      if(bits.some(b=>b.a>0)) requestAnimationFrame(loop);
+    })();
+  }
+
+  // ======= LEADERBOARD PROVIDERS =======
+  const LocalProvider = {
+    async get(){ return JSON.parse(localStorage.getItem('rpo_board')||'[]'); },
+    async add(row){
+      const list = await this.get(); list.push(row);
+      localStorage.setItem('rpo_board', JSON.stringify(list));
+      return list;
+    },
+    async wipe(){ localStorage.removeItem('rpo_board'); }
+  };
+
+  const SupaProvider = {
+    async get(){
+      const res = await fetch(`${SUPABASE.URL}/rest/v1/${SUPABASE.TABLE}?select=*&order=ms.asc&limit=100`,{
+        headers:{'apikey':SUPABASE.ANON,'Authorization':`Bearer ${SUPABASE.ANON}`}
+      });
+      return await res.json();
+    },
+    async add(row){
+      const res = await fetch(`${SUPABASE.URL}/rest/v1/${SUPABASE.TABLE}`,{
+        method:'POST',
+        headers:{'apikey':SUPABASE.ANON,'Authorization':`Bearer ${SUPABASE.ANON}`,'Content-Type':'application/json'},
+        body:JSON.stringify(row)
+      });
+      if(!res.ok){ const t = await res.text(); throw new Error(t); }
+      return this.get();
+    },
+    async wipe(){ showToast('Wipe is disabled for cloud provider.'); }
+  };
+
+  const Provider = PROVIDER==='supabase' ? SupaProvider : LocalProvider;
+
+  async function refreshBoard(){
+    const list = await Provider.get();
+    const sorted = list
+      .map((r,i)=>({i, ...r}))
+      .sort((a,b)=> (b.keys-a.keys) || (a.ms-b.ms));
+    boardEl.innerHTML = sorted.map((r,idx)=>{
+      const d = new Date(r.created_at||Date.now());
+      return `<tr><td>${idx+1}</td><td>${r.alias}</td><td>${r.keys}</td><td>${fmt(r.ms)}</td><td>${d.toLocaleDateString()}</td></tr>`
+    }).join('');
+  }
+
+  // ======= GAME FLOW =======
+  el('#start').addEventListener('click', ()=>{
+    const a = normaliseInput(el('#alias').value || 'ANON');
+    state.alias = a; playerNameEl.textContent = a; if(!state.startedAt){ state.startedAt = now(); }
+    persist(); updateHUD(); reflectUI(); refreshBoard(); showToast(`Welcome, ${a}. Hunt well.`);
+  });
+
+  el('#resetRun').addEventListener('click', ()=>{
+    const keepAlias = state.alias;
+    state = { alias: keepAlias || 'ANON', startedAt:null, finishedAt:null, keys:0, solved:{1:false,2:false,3:false} };
+    persist(); updateHUD(); reflectUI(); ['#k1','#k2','#k3'].forEach(s=>{const i=el(s); if(i) i.value='';});
+    showToast('Run reset.');
+  });
+
+  el('#wipeBoard').addEventListener('click', async ()=>{ await Provider.wipe(); await refreshBoard(); showToast('Local leaderboard cleared.');});
+
+  el('#shareBtn').addEventListener('click',()=>{
+    const txt = `🏆 READY PLAYER ONE — Three Keys\nAlias: ${state.alias}\nKeys: ${state.keys}/3\nTime: ${fmt((state.finishedAt||now())-(state.startedAt||now()))}`;
+    navigator.clipboard.writeText(txt).then(()=>showToast('Copied proof to clipboard.'));
+  });
+
+  document.querySelectorAll('button[data-key]').forEach(btn=>{
+    btn.addEventListener('click', ()=> validateKey(+btn.dataset.key));
+  });
+
+  async function validateKey(n){
+    const input = el('#k'+n);
+    const res = results[n];
+    const val = normaliseInput(input.value);
+    if(!val){ res.innerHTML = `<span class="hint">Enter a phrase.</span>`; return; }
+
+    let ok = false; let acceptedHashes = HASHES[n] || [];
+
+    if(n===3){
+      // Dynamic final phrase: "<ALIAS> WON"
+      const target = normaliseInput(`${state.alias} WON`);
+      const h = await sha256Hex(target);
+      acceptedHashes = [h];
+    }
+
+    const hv = await sha256Hex(val);
+    ok = acceptedHashes.includes(hv);
+
+    if(ok){
+      if(!state.solved[n]){
+        state.solved[n] = true; state.keys = Object.values(state.solved).filter(Boolean).length; persist(); updateHUD(); reflectUI();
+        res.innerHTML = `<span class="ok">✔ Key accepted.</span>`;
+        if(state.keys===3){
+          if(!state.finishedAt) state.finishedAt = now();
+          persist();
+          bang(); showToast('All three keys. You cleared the gates!');
+          // commit to leaderboard
+          const totalMs = (state.finishedAt - (state.startedAt || state.finishedAt));
+          const row = { alias: state.alias, keys: 3, ms: totalMs, created_at: new Date().toISOString() };
+          Provider.add(row).then(refreshBoard).catch(e=>showToast('Save failed: '+e.message));
+        } else {
+          showToast(`Key ${n} accepted. Proceed.`);
+        }
+      } else {
+        res.innerHTML = `<span class="ok">Already unlocked.</span>`;
+      }
+    } else {
+      res.innerHTML = `<span class="err">✖ Incorrect phrase. Keep hunting.</span>`;
+    }
+  }
+
+  // First paint
+  refreshBoard(); updateHUD(); reflectUI();
+  </script>
+</body>
+</html>
